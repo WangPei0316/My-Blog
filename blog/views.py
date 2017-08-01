@@ -30,6 +30,8 @@ def category(request,pk):
 def detail(request,pk):
     #用到了从 django.shortcuts 模块导入的 get_object_or_404 方法，其作用就是当传入的 pk 对应的 Post 在数据库存在时，就返回对应的 post，如果不存在，就给用户返回一个 404 错误，表明用户请求的文章不存在。
     post = get_object_or_404(Post,pk=pk)
+    #阅读量加1
+    post.increase_views()
     post.body = markdown.markdown(post.body,
                                   extensions = [
                         'markdown.extensions.extra',
