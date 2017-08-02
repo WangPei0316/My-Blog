@@ -3,6 +3,8 @@ from django.shortcuts import render,get_object_or_404
 from .models import Post,Category,Tag
 from comments.forms import CommentForm
 from django.views.generic import ListView,DetailView
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
 
 #首页视图
 class IndexView(ListView):
@@ -178,12 +180,13 @@ class PostDetailView(DetailView):
     def get_object(self, queryset=None):
         #复写get_object方法是为了对post的body值进行渲染
         post = super(PostDetailView,self).get_object(queryset=None)
-        post.body = markdown.markdown(post.body,
-                                  extensions = [
+        md = markdown.markdown(extensions = [
                         'markdown.extensions.extra',
                         'markdown.extensions.codehilite',
-                        'markdown.extensions.toc',
+                        TocExtension(slugify=slugify),
                                   ])
+        post.body = md.convert(post.body)
+        post.toc = md.toc
         return post
 
     def get_context_data(self, **kwargs):
