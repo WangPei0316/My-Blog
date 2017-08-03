@@ -9,7 +9,7 @@
                                                       datetime="{{ post.create_time }}">{{ post.create_time }}</time></a></span>
             <span class="post-author"><a href="#">{{ post.author }}</a></span>
             <span class="comments-link"><a href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
-            <span class="views-count"><a href="{{ post.get_absolute_url }}">{{ post.views }} 阅读</a></span>
+            <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
         </div>
     </header>
     <div class="entry-content clearfix">
@@ -59,7 +59,7 @@
             {% for comment in comment_list %}
             <li class="comment-item">
                 <span class="nickname">{{ comment.name }}</span>
-                <time class="submit-date" >{{ comment.create_time }}</time>
+                <time class="submit-date" datetime="{{ comment.create_time }}">{{ comment.create_time }}</time>
                 <div class="text">
                     {{ comment.text }}
                 </div>

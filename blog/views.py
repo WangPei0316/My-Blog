@@ -24,7 +24,7 @@ class IndexView(ListView):
         """
 
         #首先获得父类生成的传递给模板的字典
-        context = super().get_context_data(**kwargs)
+        context = super(IndexView,self).get_context_data(**kwargs)
 
         # 父类生成的字典中已有 paginator、page_obj、is_paginated 这三个模板变量，
         # paginator 是 Paginator 的一个实例，
@@ -74,7 +74,7 @@ class IndexView(ListView):
         page_range = paginator.page_range
 
         if page_number == 1:
-            right = page_range[page_number:page_number+2]
+            right = page_range[page_number:page_number + 2]
             if right[-1] < total_pages - 1:
                 right_has_more = True
 
@@ -181,11 +181,11 @@ class PostDetailView(DetailView):
     def get_object(self, queryset=None):
         #复写get_object方法是为了对post的body值进行渲染
         post = super(PostDetailView,self).get_object(queryset=None)
-        md = markdown.markdown(extensions = [
-                        'markdown.extensions.extra',
-                        'markdown.extensions.codehilite',
-                        TocExtension(slugify=slugify),
-                                  ])
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            TocExtension(slugify=slugify),
+        ])
         post.body = md.convert(post.body)
         post.toc = md.toc
         return post
