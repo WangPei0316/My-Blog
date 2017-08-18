@@ -13,7 +13,7 @@ class IndexView(ListView):
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
     #指定paginate_by属性后开启分页功能，其值代表每一页包含多少篇文章
-    paginate_by = 2
+    paginate_by = 10
     def get_context_data(self, **kwargs):
         """
         在视图函数中将模板变量传递给模板是通过给 render 函数的 context 参数传递一个字典实现的，
