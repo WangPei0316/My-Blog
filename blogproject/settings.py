@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0,os.path.join(BASE_DIR,'extra_apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +43,8 @@ INSTALLED_APPS = [
     'haystack',
     'blog',#注册blog应用
     'comments',#评论功能
+    'extra_apps.xadmin',
+    'crispy_forms',
 ]
 HAYSTACK_CONNECTIONS = {
     'default': {
