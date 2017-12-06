@@ -16,6 +16,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name="类别"
+        verbose_name_plural=verbose_name
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
@@ -23,6 +26,9 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name="标签"
+        verbose_name_plural=verbose_name
 
 class Post(models.Model):
     """
@@ -72,6 +78,8 @@ class Post(models.Model):
         return self.title
     class Meta:
         ordering = ['-create_time']
+        verbose_name = "文章"
+        verbose_name_plural = verbose_name
 
     def save(self, *args,**kwargs):
         #如果没有填写摘要
