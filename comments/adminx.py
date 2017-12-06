@@ -1,0 +1,1 @@
+from extra_apps import xadmin
