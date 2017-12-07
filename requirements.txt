@@ -6,7 +6,7 @@ Automat==0.6.0
 beautifulsoup4==4.6.0
 bleach==2.1.1
 blinker==1.4
-Brlapi==0.6.4
+
 certifi==2017.7.27.1
 cffi==1.11.2
 chardet==3.0.4
