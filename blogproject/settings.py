@@ -26,7 +26,7 @@ sys.path.insert(0,os.path.join(BASE_DIR,'extra_apps'))
 SECRET_KEY = '6$&1$!=u@vtf^tq5ae%u^u=s)+v=_=0*@tt&%pee%_aogob=rs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost','.wangpei.site']
 
