@@ -44,7 +44,7 @@
                             <li><a href="?page={{ i }}">{{ i }}</a></li>
                         {% endfor %}
                     {% endif %}
-                    <li><a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a></li>
+                    <a class="current-page" href="?page={{ page_obj.number }}" >{{ page_obj.number }}</a>
                     {% if right %}
                         {% for i in right %}
                             <li><a href="?page={{ i }}">{{ i }}</a></li>
