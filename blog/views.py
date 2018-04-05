@@ -1,19 +1,21 @@
 import markdown
-from django.shortcuts import render,get_object_or_404
-from .models import Post,Category,Tag
+from django.shortcuts import render, get_object_or_404
+from .models import Post, Category, Tag
 from comments.forms import CommentForm
-from django.views.generic import ListView,DetailView
+from django.views.generic import ListView, DetailView
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from django.db.models import Q
 
-#首页视图
+
+# 首页视图
 class IndexView(ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
-    #指定paginate_by属性后开启分页功能，其值代表每一页包含多少篇文章
+    # 指定paginate_by属性后开启分页功能，其值代表每一页包含多少篇文章
     paginate_by = 10
+
     def get_context_data(self, **kwargs):
         """
         在视图函数中将模板变量传递给模板是通过给 render 函数的 context 参数传递一个字典实现的，
@@ -23,8 +25,8 @@ class IndexView(ListView):
         所以我们复写该方法，以便我们能够自己再插入一些我们自定义的模板变量进去。
         """
 
-        #首先获得父类生成的传递给模板的字典
-        context = super(IndexView,self).get_context_data(**kwargs)
+        # 首先获得父类生成的传递给模板的字典
+        context = super(IndexView, self).get_context_data(**kwargs)
 
         # 父类生成的字典中已有 paginator、page_obj、is_paginated 这三个模板变量，
         # paginator 是 Paginator 的一个实例，
@@ -36,8 +38,8 @@ class IndexView(ListView):
         page = context.get('page_obj')
         is_paginated = context.get('is_paginated')
 
-        #调用自己写的 pagination_data 方法获得显示分页导航条需要的数据
-        pagination_data = self.pagination_data(paginator,page,is_paginated)
+        # 调用自己写的 pagination_data 方法获得显示分页导航条需要的数据
+        pagination_data = self.pagination_data(paginator, page, is_paginated)
 
         # 将分页导航条的模板变量更新到 context 中， pagination_data 方法返回的也是一个字典。
         context.update(pagination_data)
@@ -45,18 +47,19 @@ class IndexView(ListView):
         # 将更新后的 context 返回，以便 ListView 使用这个字典中的模板变量去渲染模板。
         # 此时 context 字典中已有了显示分页导航条所需的数据。
         return context
-    def pagination_data(self,paginator,page,is_paginated):
+
+    def pagination_data(self, paginator, page, is_paginated):
         if not is_paginated:
-            #如果没有分页，则无需显示分页导航条，不用分页导航条的数据，返回空字典
+            # 如果没有分页，则无需显示分页导航条，不用分页导航条的数据，返回空字典
             return {}
 
-        #当前页左边连续的页码号，初始值为空
+        # 当前页左边连续的页码号，初始值为空
         left = []
-        #当前页右边连续的页码号，初始值为空
+        # 当前页右边连续的页码号，初始值为空
         right = []
-        #标签第1页页码后是否需要显示省略号
+        # 标签第1页页码后是否需要显示省略号
         left_has_more = False
-        #标签最后一页页码后是否需要显示省略号
+        # 标签最后一页页码后是否需要显示省略号
         right_has_more = False
         # 标示是否需要显示第 1 页的页码号。
         # 因为如果当前页左边的连续页码号中已经含有第 1 页的页码号，此时就无需再显示第 1 页的页码号，
@@ -66,11 +69,11 @@ class IndexView(ListView):
         # 标示是否需要显示最后一页的页码号。
         last = False
 
-        #获取当前用户请求的页码号
+        # 获取当前用户请求的页码号
         page_number = page.number
-        #获取分页后的总页数
+        # 获取分页后的总页数
         total_pages = paginator.num_pages
-        #获取整个分页页码列表，比如分了4页，就是[1,2,3,4]
+        # 获取整个分页页码列表，比如分了4页，就是[1,2,3,4]
         page_range = paginator.page_range
 
         if page_number == 1:
@@ -90,7 +93,7 @@ class IndexView(ListView):
                 first = True
 
         else:
-            left = page_range[(page_number - 3) if (page_number -3) > 0 else 0:page_number - 1]
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
             right = page_range[page_number:page_number + 2]
 
             if right[-1] < total_pages - 1:
@@ -104,19 +107,15 @@ class IndexView(ListView):
                 first = True
 
         data = {
-            'left':left,
-            'right':right,
-            'left_has_more':left_has_more,
-            'right_has_more':right_has_more,
-            'first':first,
-            'last':last,
+            'left': left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
         }
 
         return data
-
-
-
-
 
 
 # def index(request):
@@ -128,12 +127,13 @@ class IndexView(ListView):
 #     })
 
 
-#归档视图
+# 归档视图
 class ArchivesView(IndexView):
     def get_queryset(self):
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
-        return super(ArchivesView,self).get_queryset().filter(create_time__year=year,create_time__month=month)
+        return super(ArchivesView, self).get_queryset().filter(create_time__year=year, create_time__month=month)
+
 
 # def archives(request,year,month):
 #     post_list = Post.objects.filter(create_time__year=year,
@@ -141,11 +141,12 @@ class ArchivesView(IndexView):
 #     return render(request,'blog/index.html',context={'post_list':post_list})
 
 
-#分类视图
+# 分类视图
 class CategoryView(IndexView):
     def get_queryset(self):
-        cate = get_object_or_404(Category,pk=self.kwargs.get('pk'))
-        return super(CategoryView,self).get_queryset().filter(category = cate)
+        cate = get_object_or_404(Category, pk=self.kwargs.get('pk'))
+        return super(CategoryView, self).get_queryset().filter(category=cate)
+
 
 # def category(request,pk):
 #     cate = get_object_or_404(Category,pk=pk)
@@ -155,32 +156,33 @@ class CategoryView(IndexView):
 # 标签视图
 class TagView(IndexView):
     def get_queryset(self):
-        tag = get_object_or_404(Tag,pk=self.kwargs.get('pk'))
-        return super(TagView,self).get_queryset().filter(tags = tag)
+        tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
+        return super(TagView, self).get_queryset().filter(tags=tag)
 
 
-#详情页视图
+# 详情页视图
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
     context_object_name = 'post'
-    def get(self,request,*args,**kwargs):
-        #复写get方法目的是因为每当文章被访问就需要将阅读量+1
-        #get方法返回的是一个HttpResponse实例
-        #之所以要先调用父类的get方法，是因为只有当get方法被调用后
-        #才有self.object属性，其值为Post模型实例，即被访问的文章post
-        response =super(PostDetailView,self).get(request,*args,**kwargs)
 
-        #将文章阅读量+1
-        #注意self.object的值就是被访问的文章post
+    def get(self, request, *args, **kwargs):
+        # 复写get方法目的是因为每当文章被访问就需要将阅读量+1
+        # get方法返回的是一个HttpResponse实例
+        # 之所以要先调用父类的get方法，是因为只有当get方法被调用后
+        # 才有self.object属性，其值为Post模型实例，即被访问的文章post
+        response = super(PostDetailView, self).get(request, *args, **kwargs)
+
+        # 将文章阅读量+1
+        # 注意self.object的值就是被访问的文章post
         self.object.increase_views()
 
-        #视图必须返回一个HttpResponse对象
+        # 视图必须返回一个HttpResponse对象
         return response
 
     def get_object(self, queryset=None):
-        #复写get_object方法是为了对post的body值进行渲染
-        post = super(PostDetailView,self).get_object(queryset=None)
+        # 复写get_object方法是为了对post的body值进行渲染
+        post = super(PostDetailView, self).get_object(queryset=None)
         md = markdown.Markdown(extensions=[
             'markdown.extensions.extra',
             'markdown.extensions.codehilite',
@@ -191,14 +193,14 @@ class PostDetailView(DetailView):
         return post
 
     def get_context_data(self, **kwargs):
-        #复写get_context_data的目的是为了除了将post传递给模板外
-        #还要将评论表单、post下的评论列表传递给模板
-        context =super(PostDetailView,self).get_context_data(**kwargs)
+        # 复写get_context_data的目的是为了除了将post传递给模板外
+        # 还要将评论表单、post下的评论列表传递给模板
+        context = super(PostDetailView, self).get_context_data(**kwargs)
         form = CommentForm()
-        comment_list =self.object.comment_set.all()
+        comment_list = self.object.comment_set.all()
         context.update({
-            'form':form,
-            'comment_list':comment_list
+            'form': form,
+            'comment_list': comment_list
         })
         return context
 
@@ -231,7 +233,7 @@ def search(request):
 
     if not q:
         error_msg = '请输入关键词'
-        return render(request,'blog/index.html',{'error_msg':error_msg})
-    post_list = Post.objects.filter(Q(title__icontains=q)|Q(body__icontains=q))
-    return render(request,'blog/index.html',{'error_msg':error_msg,
-                                             'post_list':post_list})
+        return render(request, 'blog/index.html', {'error_msg': error_msg})
+    post_list = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q))
+    return render(request, 'blog/index.html', {'error_msg': error_msg,
+                                               'post_list': post_list})
